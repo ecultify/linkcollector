@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw, ExternalLink } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 
 interface Link {
   id: number;
@@ -133,16 +133,15 @@ export default function Home() {
   const duplicateCount = linksWithDuplicates.filter((link) => link.isDuplicate).length;
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-background p-2 md:p-4">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8 flex items-start justify-between gap-4">
+        <div className="mb-4 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Link Tracker</h1>
-            <p className="text-muted-foreground">
-              Total Links: <span className="font-semibold">{totalLinks}</span> | 
-              Page: <span className="font-semibold">{currentPage}</span> of{" "}
-              <span className="font-semibold">{totalPages || 1}</span> | 
-              Links on this page: <span className="font-semibold">{currentLinks.length}</span>
+            <h1 className="text-2xl font-bold mb-1">Link Tracker</h1>
+            <p className="text-sm text-muted-foreground">
+              Total: <span className="font-semibold">{totalLinks}</span> | 
+              Page: <span className="font-semibold">{currentPage}</span>/{totalPages || 1} | 
+              This page: <span className="font-semibold">{currentLinks.length}</span>
               {duplicateCount > 0 && (
                 <> | Duplicates: <span className="font-semibold text-destructive">{duplicateCount}</span></>
               )}
@@ -152,6 +151,7 @@ export default function Home() {
             onClick={fetchLinks}
             disabled={loading}
             variant="outline"
+            size="sm"
             className="shrink-0"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
@@ -239,46 +239,19 @@ export default function Home() {
                 return (
                   <div
                     key={link.id}
-                    className={`p-4 hover:bg-accent/50 transition-colors ${
-                      link.isDuplicate ? "bg-destructive/5 border-l-4 border-l-destructive" : ""
-                    }`}
+                    className="px-2 py-1 hover:bg-accent/50 transition-colors flex items-center gap-2"
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-mono text-muted-foreground">
-                            #{positionNumber}
-                          </span>
-                          {link.isDuplicate && link.duplicateInfo && (
-                            <Badge variant="destructive" className="text-xs">
-                              Duplicate: Page {link.duplicateInfo.page}, Position {link.duplicateInfo.position}
-                            </Badge>
-                          )}
-                        </div>
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-lg font-semibold hover:underline break-all block mb-1"
-                        >
-                          {link.title}
-                          <ExternalLink className="inline-block ml-1 h-4 w-4" />
-                        </a>
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-muted-foreground hover:text-foreground break-all block"
-                        >
-                          {link.url}
-                        </a>
-                        {link.description && (
-                          <p className="text-sm text-muted-foreground mt-2">
-                            {link.description}
-                          </p>
-                        )}
-                      </div>
-                    </div>
+                    <span className="text-xs font-mono text-muted-foreground shrink-0 w-8">
+                      {positionNumber}
+                    </span>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm hover:underline break-all flex-1"
+                    >
+                      {link.url}
+                    </a>
                   </div>
                 );
               })}
