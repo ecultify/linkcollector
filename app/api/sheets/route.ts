@@ -6,12 +6,26 @@ import { join } from "path";
 const SPREADSHEET_ID = "1dDBEZ9BVCm-7WD55YSK5alUNBgSEhHk3aAY-RP-DFyw";
 const SHEET_NAME = "Links";
 
-// Load credentials from JSON file
-const credentialsPath = join(process.cwd(), "green-talent-472210-q9-6c4322bbe2a4.json");
-const credentials = JSON.parse(readFileSync(credentialsPath, "utf8"));
+// Load credentials from environment variable or JSON file
+function getCredentials() {
+  // Try environment variable first (for Vercel deployment)
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
+    return JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+  }
+  
+  // Fall back to JSON file (for local development)
+  try {
+    const credentialsPath = join(process.cwd(), "green-talent-472210-q9-6c4322bbe2a4.json");
+    return JSON.parse(readFileSync(credentialsPath, "utf8"));
+  } catch (error) {
+    throw new Error("Google Service Account credentials not found. Please set GOOGLE_SERVICE_ACCOUNT_KEY environment variable or provide the credentials JSON file.");
+  }
+}
 
 export async function GET() {
   try {
+    const credentials = getCredentials();
+    
     const auth = new google.auth.GoogleAuth({
       credentials: credentials,
       scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
@@ -58,4 +72,3 @@ export async function GET() {
     );
   }
 }
-
